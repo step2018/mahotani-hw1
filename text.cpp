@@ -3,73 +3,67 @@
 #include <string.h>
 
 /* macros */
-#define N 72412
-#define MAX 16
+#define MAX 17
 
-int main(void)
-{
-	//変数の定義
-	FILE *fp;
-    char *filename = "dictionary";
-	char readline[N] = {'\0'};
-	int i, j, k, count;
-	int a, b;
-	char ch[17];
-	char str[17];
-	char st[17] = "read";
-	char c;
-	char ex[17];
-	char result[17];
-	int score, sc;
-	
+int main(void) {
+  //変数の定義を実際に使っているところの近くにするのは読みやすくなる。
+  /* ファイルのオープン */
+  FILE *fp;
+  const char *filename = "dictionary";
+  if ((fp = fopen(filename, "r")) ==
+      NULL) {  // ちゃんとエラーを確認するのは良いことです＾＾
+    fprintf(stderr, "%sのオープンに失敗しました.\n", filename);
+    exit(EXIT_FAILURE);
+  }
 
-	/* ファイルのオープン */
-    if ((fp = fopen(filename, "r")) == NULL) {
-        fprintf(stderr, "%sのオープンに失敗しました.\n", filename);
-        exit(EXIT_FAILURE);
+  //文字列を与える
+  printf("文字列を入力してください\n");
+  char ch[MAX];  // MAXを変えたらこの部分も変わって欲しいので
+  scanf("%s", ch);
+
+  char ex[MAX];
+  strcpy(ex, ch);
+
+  /* ファイルの終端まで文字を読み取り表示する */
+  char str[MAX];
+  char result[MAX];
+  int sc = 0;
+  while (fgets(str, MAX - 1, fp) != NULL) {
+    strcpy(ch, ex);
+    int a = 1;
+    int score = 1;
+    for (int i = 0; i < strlen(str); ++i) {
+      int j;
+      for (j = 0; j < strlen(ch) && str[i] != ch[j]; ++j) {
+      }
+      if(j < strlen(ch)){
+        a++;
+        ch[j] = '1';
+        if (str[i] == 'j' || str[i] == 'k' || str[i] == 'q' || str[i] == 'x' ||
+            str[i] == 'z') {
+          score = score + 3;
+        } else if (str[i] == 'c' || str[i] == 'f' || str[i] == 'h' ||
+                   str[i] == 'l' || str[i] == 'm' || str[i] == 'p' ||
+                   str[i] == 'v' || str[i] == 'w' || str[i] == 'y') {
+          score = score + 2;
+        } else {
+          score++;
+        }
+      }
     }
-	
-	//文字列を与える
-	printf("文字列を入力してください\n");
-	scanf("%s", ch);
-	
-	strcpy(ex,ch);
-	
-	/* ファイルの終端まで文字を読み取り表示する */
-	while ( fgets(str, MAX,fp) != NULL ) {
-		strcpy(ch,ex);
-		a = 1;
-		score = 1;
-		for(i = 0; i < strlen(str); ++i){
-			for(j = 0; j < strlen(ch) && str[i] != ch[j]; ++j){
-			}
-			if(j < strlen(ch)){
-				a++;
-				ch[j] = '1';
-				if(str[i] == 'j' || str[i] == 'k' || str[i] == 'q' || str[i] == 'x' || str[i] == 'z'){
-					score = score + 3;
-				}else if(str[i] == 'c' || str[i] == 'f' || str[i] == 'h' || str[i] == 'l' || str[i] == 'm' || str[i] == 'p' || str[i] == 'v' || str[i] == 'w' || str[i] == 'y'){
-					score = score + 2;
-				}else{
-					score++;
-				}
-			}
-		}
-	
-		if(a == strlen(str)){
-			if(sc < score){
-				strcpy(result,str);
-				sc = score;
-			}
-		}else{
-		}
-	
-	}
-	
-	printf("結果：%s\n", result);
 
-	/* ファイルのクローズ */
-	fclose(fp);
-	
-    return 0;
+    if (a == strlen(str)) {
+      if (sc < score) {
+        strcpy(result, str);
+        sc = score;
+      }
+    }
+  }
+
+  printf("結果：%s\n", result);
+
+  /* ファイルのクローズ */
+  fclose(fp);
+
+  return 0;
 }
